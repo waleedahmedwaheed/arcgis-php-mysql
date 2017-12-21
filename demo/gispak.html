@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+
+    <title>Simple Map</title>
+
+    <link rel="stylesheet" href="http://js.arcgis.com/3.10/js/esri/css/esri.css">
+
+    <style>
+
+        html, body, #map {
+
+            height: 100%;
+
+            width: 100%;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        body {
+
+            background-color: #FFF;
+
+            overflow: hidden;
+
+            font-family: "Trebuchet MS";
+
+        }
+
+    </style>
+
+    <script src="http://js.arcgis.com/3.10/"></script>
+
+    <script>
+
+        var map, textSymbol, picSymbol;
+
+        require(["esri/map",
+
+    "esri/graphic",
+
+    "esri/symbols/PictureMarkerSymbol",
+
+    "esri/symbols/TextSymbol",
+
+    "esri/geometry/Point",
+
+    "esri/SpatialReference",
+
+    "esri/tasks/ProjectParameters",
+
+    "esri/tasks/GeometryService",
+    
+	"esri/dijit/InfoWindow",
+
+    "dojo/dom-construct",
+    
+	"dojo/on",
+
+    "dojo/domReady!"
+
+        ], function (Map, Graphic, PictureMarkerSymbol, TextSymbol, Point, SpatialReference, ProjectParameters, GeometryService, InfoWindow, domConstruct,  on) {
+
+            map = new Map("map", {
+
+                basemap: "topo",
+
+                center: [69.345116, 30.375321], // longitude, latitude
+
+                zoom: 6,
+				
+				infoWindow: infoWindow
+
+            });
+			
+			var infoWindow = new InfoWindow({}, domConstruct.create("div", { innerHTML: "Text Element inside an HTML div element." }));
+			infoWindow.startup();
+			
+			var infoSymbol = new esri.symbol.PictureMarkerSymbol({
+			"angle": 0,
+			"xoffset": 0,
+			"yoffset": 12,
+			"type": "esriPMS",
+			"url": "http://static.arcgis.com/images/Symbols/Basic/YellowStickpin.png",
+			"contentType": "image/png",
+			"width": 24,
+			"height": 24
+			});
+
+            /* var jsonString = { 
+			locations: 
+			[
+			{ latitude: 51.6220455, longitude: 4.54404212, textToDisplayOnThePictureMarkerSymbol: 34 }, 
+			{ latitude: 51.8838877, longitude: 4.7527823578, textToDisplayOnThePictureMarkerSymbol: 50 }, 
+			{ latitude: 52.8838877, longitude: 4.7627823578, textToDisplayOnThePictureMarkerSymbol: 50 }
+			] 
+			}; */
+			
+			var jsonString = { 
+			locations: 
+			[
+    {
+        "city": "Karachi", 
+        "admin": "Sindh", 
+        "country": "Pakistan", 
+        "population_proper": "11624219", 
+        "iso2": "PK", 
+        "capital": "admin", 
+        "latitude": "24.9056", 
+        "longitude": "67.0822", 
+        "population": "12130000",
+		//"textToDisplayOnThePictureMarkerSymbol": "34"
+    }, 
+    {
+        "city": "Lahore", 
+        "admin": "Punjab", 
+        "country": "Pakistan", 
+        "population_proper": "6310888", 
+        "iso2": "PK", 
+        "capital": "admin", 
+        "latitude": "31.549722", 
+        "longitude": "74.343611", 
+        "population": "6577000",
+		//"textToDisplayOnThePictureMarkerSymbol": "50"
+    }, 
+    {
+        "city": "Faisal\u0101b\u0101d", 
+        "admin": "Punjab", 
+        "country": "Pakistan", 
+        "population_proper": "2506595", 
+        "iso2": "PK", 
+        "capital": "minor", 
+        "latitude": "31.416667", 
+        "longitude": "73.083333", 
+        "population": "2617000",
+		//"textToDisplayOnThePictureMarkerSymbol": "44"
+    },
+	{
+        "city": "Serai", 
+        "admin": "Khyber Pakhtunkhwa", 
+        "country": "Pakistan", 
+        "population_proper": "1860310", 
+        "iso2": "PK", 
+        "capital": "", 
+        "latitude": "34.73933", 
+        "longitude": "72.335655", 
+        "population": "1860310"
+    }, 
+    {
+        "city": "R\u0101walpindi", 
+        "admin": "Punjab", 
+        "country": "Pakistan", 
+        "population_proper": "1743101", 
+        "iso2": "PK", 
+        "capital": "minor", 
+        "latitude": "33.597331", 
+        "longitude": "73.047904", 
+        "population": "1858000"
+    }, 
+    {
+        "city": "Mult\u0101n", 
+        "admin": "Punjab", 
+        "country": "Pakistan", 
+        "population_proper": "1437230", 
+        "iso2": "PK", 
+        "capital": "minor", 
+        "latitude": "30.196789", 
+        "longitude": "71.478241", 
+        "population": "1522000"
+    }, 
+    {
+        "city": "Gujr\u0101nw\u0101la", 
+        "admin": "Punjab", 
+        "country": "Pakistan", 
+        "population_proper": "1384471", 
+        "iso2": "PK", 
+        "capital": "minor", 
+        "latitude": "32.155667", 
+        "longitude": "74.187052", 
+        "population": "1513000"
+    }, 
+    {
+        "city": "Hyder\u0101b\u0101d City", 
+        "admin": "Sindh", 
+        "country": "Pakistan", 
+        "population_proper": "1386330", 
+        "iso2": "PK", 
+        "capital": "minor", 
+        "latitude": "25.396891", 
+        "longitude": "68.377183", 
+        "population": "1459000"
+    }, 
+    {
+        "city": "Pesh\u0101war", 
+        "admin": "Khyber Pakhtunkhwa", 
+        "country": "Pakistan", 
+        "population_proper": "1218773", 
+        "iso2": "PK", 
+        "capital": "admin", 
+        "latitude": "34.008", 
+        "longitude": "71.578488", 
+        "population": "1303000"
+    }, 
+    {
+        "city": "Abbott\u0101b\u0101d", 
+        "admin": "Khyber Pakhtunkhwa", 
+        "country": "Pakistan", 
+        "population_proper": "881000", 
+        "iso2": "PK", 
+        "capital": "minor", 
+        "latitude": "34.1463", 
+        "longitude": "73.211684", 
+        "population": "1183647"
+    }, 
+    {
+        "city": "Islamabad", 
+        "admin": "Isl\u0101m\u0101b\u0101d", 
+        "country": "Pakistan", 
+        "population_proper": "601600", 
+        "iso2": "PK", 
+        "capital": "primary", 
+        "latitude": "33.69", 
+        "longitude": "73.0551", 
+        "population": "780000"
+    }, 
+    {
+        "city": "Quetta", 
+        "admin": "Balochist\u0101n", 
+        "country": "Pakistan", 
+        "population_proper": "733675", 
+        "iso2": "PK", 
+        "capital": "admin", 
+        "latitude": "30.184138", 
+        "longitude": "67.00141", 
+        "population": "768000"
+    }
+	]
+	};
+
+            jsonString = jsonString.locations;
+
+       //     picSymbol = new PictureMarkerSymbol('http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png', 60, 60);
+            picSymbol = new PictureMarkerSymbol('fwo.png', 25, 25);
+
+            map.on("load", function (evt) {
+
+                for (var i = 0; i < jsonString.length; i++) {
+
+                    var geometryPoint = new Point(jsonString[i].longitude, jsonString[i].latitude, new SpatialReference(4326));
+
+                    textSymbol = new TextSymbol(jsonString[i].textToDisplayOnThePictureMarkerSymbol).setOffset(0, -4);                   
+
+                    map.graphics.add(new Graphic(geometryPoint, picSymbol));
+
+                    map.graphics.add(new Graphic(geometryPoint, textSymbol));                   
+                    
+					//alert(jsonString[i].city);
+					
+					var city = jsonString[i].city;
+					var population = jsonString[i].population;
+					var admin = jsonString[i].admin;
+					//map.graphics.add(new Graphic(geometryPoint, infoSymbol));
+					
+					//map.infoWindow.setTitle("Coordinates");
+					//map.infoWindow.setContent("lat/lon : " + latitude.toFixed(2) + ", " + longitude.toFixed(2));	
+					
+					//map.infoWindow.setTitle("HTML");
+					//map.infoWindow.setContent("This content uses <strong>HTML</strong> for formatting.<p>This is a paragraph</p><p>Another Paragraph</p>");
+					
+					map.graphics.on("click", function(evt) {
+//					map..add(graphic);
+					  map.infoWindow.setTitle("Information");
+					  //map.infoWindow.setContent("lat/lon : " + evt.mapPoint.y + ", " + evt.mapPoint.x);
+					  //map.infoWindow.setContent("City : " + city);
+					  //map.infoWindow.setContent("Population : " + population);
+					  map.infoWindow.setContent("City : <strong>"+city+"</strong> <br> Population : <strong>"+population+"</strong> <br> Province : <strong>"+admin+"</strong> <br>");
+					  map.infoWindow.show(evt.screenPoint,map.getInfoWindowAnchor(evt.screenPoint));
+					});
+
+				}
+
+            });
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+</body>
+</html>

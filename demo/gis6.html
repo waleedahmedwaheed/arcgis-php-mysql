@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <link rel="stylesheet" href="//js.arcgis.com/3.7/js/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%; width: 100%; margin: 0; padding: 0; 
+      }
+    </style>
+
+    <script src="//js.arcgis.com/3.7/"></script>
+    <script>
+      var map;
+    
+      require([
+        "esri/map", 
+        "esri/geometry/Point",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/graphic", 
+        "esri/layers/GraphicsLayer",
+        "esri/symbols/PictureMarkerSymbol",
+		"dojo/domReady!"		
+      ], function(
+         Map, Point, SimpleMarkerSymbol, Graphic, GraphicsLayer, PictureMarkerSymbol
+      ) {
+        map = new Map("map", {
+          basemap: "streets",
+          center: [73.046247, 33.589105],
+          zoom: 10
+        });
+        map.on("load", function() {
+			
+			var symbol = {
+		  type: "picture-marker",  // autocasts as new PictureMarkerSymbol()
+		  url: "https://webapps-cdn.esri.com/Apps/MegaMenu/img/logo.jpg",
+		  width: "8px",
+		  height: "8px"
+		};
+		  
+          var gl = new GraphicsLayer();
+         // var p = new Point(-88.380801, 42.10560);
+          var p = new Point(73.046247, 33.589105);
+          var s = new PictureMarkerSymbol('http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png', 60, 60);
+          var g = new Graphic(p, s);
+          gl.add(g);
+          map.addLayer(gl);
+		  
+         // var p = new Point(-88.380801, 42.10560);
+          var pp = new Point(73.053810, 33.598828);
+          var ss = new SimpleMarkerSymbol().setSize(60);
+          var gg = new Graphic(pp, ss);
+          gl.add(gg);
+          map.addLayer(gl);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

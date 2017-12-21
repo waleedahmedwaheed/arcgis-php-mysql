@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+
+    <title>Simple Map</title>
+
+    <link rel="stylesheet" href="http://js.arcgis.com/3.10/js/esri/css/esri.css">
+
+    <style>
+
+        html, body, #map {
+
+            height: 100%;
+
+            width: 100%;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        body {
+
+            background-color: #FFF;
+
+            overflow: hidden;
+
+            font-family: "Trebuchet MS";
+
+        }
+
+    </style>
+
+    <script src="http://js.arcgis.com/3.10/"></script>
+
+    <script>
+
+        var map, textSymbol, picSymbol;
+
+        require(["esri/map",
+
+    "esri/graphic",
+
+    "esri/symbols/PictureMarkerSymbol",
+
+    "esri/symbols/TextSymbol",
+
+    "esri/geometry/Point",
+
+    "esri/SpatialReference",
+
+    "esri/tasks/ProjectParameters",
+
+    "esri/tasks/GeometryService",
+    
+	"esri/dijit/InfoWindow",
+
+    "dojo/dom-construct",
+    
+	"dojo/on",
+
+    "dojo/domReady!"
+
+        ], function (Map, Graphic, PictureMarkerSymbol, TextSymbol, Point, SpatialReference, ProjectParameters, GeometryService, InfoWindow, domConstruct,  on) {
+
+            map = new Map("map", {
+
+                basemap: "topo",
+
+                center: [4.7115836273349, 51.79224577], // longitude, latitude
+
+                zoom: 8,
+				
+				infoWindow: infoWindow
+
+            });
+			
+			var infoWindow = new InfoWindow({}, domConstruct.create("div", { innerHTML: "Text Element inside an HTML div element." }));
+			infoWindow.startup();
+			
+			var infoSymbol = new esri.symbol.PictureMarkerSymbol({
+			"angle": 0,
+			"xoffset": 0,
+			"yoffset": 12,
+			"type": "esriPMS",
+			"url": "http://static.arcgis.com/images/Symbols/Basic/YellowStickpin.png",
+			"contentType": "image/png",
+			"width": 24,
+			"height": 24
+			});
+
+            var jsonString = { locations: [{ latitude: 51.6220455, longitude: 4.54404212, textToDisplayOnThePictureMarkerSymbol: 34 }, { latitude: 51.8838877, longitude: 4.7527823578, textToDisplayOnThePictureMarkerSymbol: 50 }, { latitude: 52.8838877, longitude: 4.7627823578, textToDisplayOnThePictureMarkerSymbol: 50 }] };
+
+            jsonString = jsonString.locations;
+
+            picSymbol = new PictureMarkerSymbol('http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png', 60, 60);
+
+            map.on("load", function (evt) {
+
+                for (var i = 0; i < jsonString.length; i++) {
+
+                    var geometryPoint = new Point(jsonString[i].longitude, jsonString[i].latitude, new SpatialReference(4326));
+
+                    textSymbol = new TextSymbol(jsonString[i].textToDisplayOnThePictureMarkerSymbol).setOffset(0, -4);                   
+
+                    map.graphics.add(new Graphic(geometryPoint, picSymbol));
+
+                    map.graphics.add(new Graphic(geometryPoint, textSymbol));                   
+                    
+					map.graphics.add(new Graphic(geometryPoint, infoSymbol));
+					
+					//map.infoWindow.setTitle("Coordinates");
+					//map.infoWindow.setContent("lat/lon : " + latitude.toFixed(2) + ", " + longitude.toFixed(2));	
+					
+					//map.infoWindow.setTitle("HTML");
+					//map.infoWindow.setContent("This content uses <strong>HTML</strong> for formatting.<p>This is a paragraph</p><p>Another Paragraph</p>");
+					
+					map.graphics.on("click", function(evt) {
+//					map..add(graphic);
+					  map.infoWindow.setTitle("Coordinates");
+					  map.infoWindow.setContent("lat/lon : " + evt.mapPoint.y + ", " + evt.mapPoint.x);
+					  map.infoWindow.show(evt.screenPoint,map.getInfoWindowAnchor(evt.screenPoint));
+					});
+
+				}
+
+            });
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+</body>0
+
+</html>
